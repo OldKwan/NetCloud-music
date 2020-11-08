@@ -10,6 +10,7 @@ import {
 } from './style';
 
 export default memo(function HYDiscover(props) {
+  
   const { route } = props;
 
   return (

@@ -13,7 +13,7 @@ import { headerLinks } from '@/common/local-data'
 const showSelectItem = (item, index) => {
     if (index < 3) {
         return (
-            <NavLink to={item.link} exact>
+            <NavLink to={item.link}>
                 {item.title}
                 <span className="sprite_01 icon" />
             </NavLink>
