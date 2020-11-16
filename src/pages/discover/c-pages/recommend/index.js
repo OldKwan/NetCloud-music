@@ -1,5 +1,5 @@
 import React, { memo, useEffect } from 'react';
-import { connect } from 'react-redux'
+import { connect, useDispatch, useSelector, shallowEqual } from 'react-redux'
 import {
   updateBannerAction,
 } from './store/actionCreators'
@@ -12,11 +12,17 @@ import {
 } from './style';
 
 function HYRecommend(props) {
-  const { onUpdateRecommendBanner, banner } = props
+  // const { onUpdateRecommendBanner, banner } = props
+
+  // redux 钩子函数应用
+  const { banner } = useSelector(state => ({
+    banner: state.recommend.banner,
+  }), shallowEqual)
+  const dispatch = useDispatch()
 
   useEffect(() => {
-    onUpdateRecommendBanner()
-  }, [])
+    dispatch(updateBannerAction())
+  }, [dispatch])
   
   return (
     <RecommendWrapper>
@@ -28,14 +34,17 @@ function HYRecommend(props) {
   )
 }
 
-const mapStateToProps = ({ recommend }) => ({
-  banner: recommend.banner,
-})
+// const mapStateToProps = ({ recommend }) => ({
+//   banner: recommend.banner,
+// })
 
-const mapDispatchToProps = dispatch => ({
-  onUpdateRecommendBanner: () => {
-    dispatch(updateBannerAction())
-  }
-})
+// const mapDispatchToProps = dispatch => ({
+//   onUpdateRecommendBanner: () => {
+//     dispatch(updateBannerAction())
+//   }
+// })
 
-export default connect(mapStateToProps, mapDispatchToProps)(memo(HYRecommend));
+// export default connect(mapStateToProps, mapDispatchToProps)(memo(HYRecommend));
+
+
+export default memo(HYRecommend);
