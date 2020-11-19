@@ -1,8 +1,7 @@
-import React, { memo, useEffect } from 'react';
-import { connect, useDispatch, useSelector, shallowEqual } from 'react-redux'
-import {
-  updateBannerAction,
-} from './store/actionCreators'
+import React, { memo } from 'react';
+
+import HYTopBanner from './c-cpns/top-banner'
+
 
 import { 
   RecommendWrapper,
@@ -12,23 +11,10 @@ import {
 } from './style';
 
 function HYRecommend(props) {
-  // const { onUpdateRecommendBanner, banner } = props
-
-  // redux 钩子函数应用
-  const { banner } = useSelector(state => ({
-    banner: state.recommend.banner,
-  }), shallowEqual)
-  const dispatch = useDispatch()
-
-  useEffect(() => {
-    dispatch(updateBannerAction())
-  }, [dispatch])
-  
   return (
     <RecommendWrapper>
+      <HYTopBanner />
       <Content className="wrap-v2">
-        {/* HYRecommend: */}
-        HYRecommend: {banner.length}
       </Content>
     </RecommendWrapper>
   )
