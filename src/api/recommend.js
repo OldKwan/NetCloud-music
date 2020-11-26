@@ -5,3 +5,11 @@ export const getRecommendBanner = () => {
         url: '/banner'
     })
 }
+export const getHotRecommend = (limit) => {
+    return request({
+        url: '/personalized',
+        params: {
+            limit,
+        }
+    })
+}
