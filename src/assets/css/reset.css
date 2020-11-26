@@ -87,6 +87,9 @@ button {
     text-overflow: ellipsis;
     overflow     : hidden;
 }
+.word-break {
+    word-break: break-all;
+}
 
 .wrap-v1 {
     width : 1100px;

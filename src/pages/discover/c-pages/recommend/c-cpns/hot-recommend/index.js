@@ -2,6 +2,7 @@ import React, { memo, useCallback, useEffect } from 'react'
 import { useDispatch, useSelector, shallowEqual } from 'react-redux'
 import HYThemeHeaderRCM from '@/components/theme-header-rcm'
 import { updateHotRecommendAction } from '@/pages/discover/c-pages/recommend/store/actionCreators'
+import HYSongsCover from '@/components/song-cover'
 import { HotRecommendWrapper } from './style'
 
 export default memo(function HYHotRecommend() {
@@ -17,9 +18,7 @@ export default memo(function HYHotRecommend() {
       <HYThemeHeaderRCM title="热门推荐" keywords={['华语', '流行', '民谣', '摇滚', '电子']} />
       <div className="recommend-list">
         {
-          hotRecommend.map((item, index) => {
-            return item.name
-          })
+          hotRecommend.map((item, index) => (<HYSongsCover info={item} key={index} />))
         }
       </div>
     </HotRecommendWrapper>
