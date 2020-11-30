@@ -24,3 +24,12 @@ export const getNewAlbum = (limit) => {
         }
     })
 }
+
+export const getRemcommendRanking = (idx) => {
+    return request({
+        url: '/top/list',
+        params: {
+            idx,
+        }
+    })
+}
