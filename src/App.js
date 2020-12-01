@@ -5,6 +5,7 @@ import { Provider } from 'react-redux'
 
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
+import HTAppPlayerBar from './pages/player/app-player-bar'
 
 import routes from './route'
 import store from './store/index'
@@ -16,6 +17,7 @@ export default memo(function App() {
                 <Header />
                 {renderRoutes(routes)}
                 <Footer />
+                <HTAppPlayerBar />
             </HashRouter>
         </Provider>
     )
