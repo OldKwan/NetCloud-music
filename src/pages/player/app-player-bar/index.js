@@ -1,5 +1,9 @@
-import React, { memo } from 'react'
+import React, { memo, useEffect } from 'react'
+import { useDispatch, useSelector, shallowEqual } from "react-redux";
 import { Slider } from 'antd'
+
+import { updateSongAction } from '../store/actionCreator'
+import { getSizeImage, formatDate } from '@/utils/format-utils'
 
 import {
     PlaybarWrapper,
@@ -9,6 +13,19 @@ import {
 } from './style'
 
 export default memo(function HTAppPlayerBar() {
+    const dispatch = useDispatch()
+
+    const { currentSong = {} } = useSelector(state => ({
+        currentSong: state.getIn(['player', 'currentSong']),
+    }), shallowEqual)
+    
+    useEffect(() => {
+        dispatch(updateSongAction(167876))
+    }, [dispatch])
+
+    const picUrl = (currentSong && currentSong.al && currentSong.al.picUrl) || ''
+    const singer = (currentSong && currentSong.ar && currentSong.ar[0] && currentSong.ar[0].name) || ''
+
     return (
         <PlaybarWrapper className="sprite_player">
             <div className="content wrap-v2">
@@ -20,20 +37,20 @@ export default memo(function HTAppPlayerBar() {
                 <PlayInfo>
                     <div className="image">
                         <a href="#">
-                            <img src="https://p2.music.126.net/v_-wonc6yEl9UVa-aPNOSQ==/109951165350855516.jpg?param=34x34" alt="" />
+                            <img src={getSizeImage(picUrl, 35)} alt="" />
                         </a>
                     </div>
                     <div className="info">
                         <div className="song">
-                            <span className="song-time">红豆</span>
-                            <a href="#" className="singer-name">要不要买菜</a>
+                            <span className="song-time">{currentSong.name}</span>
+                            <a href="#" className="singer-name">{singer}</a>
                         </div>
                         <div className="progress">
                             <Slider defaultValue={30} />
                             <div className="time">
                                 <span className="now-time">02 : 30</span>
                                 <span className="divider">/</span>
-                                <span className="duration">04 : 56</span>
+                                <span className="duration">{formatDate((currentSong && currentSong.dt) || 0, 'mm:ss')}</span>
                             </div>
                         </div>
                     </div>

@@ -1,6 +1,8 @@
 import { combineReducers } from 'redux-immutable'
-import reducer from '@/pages/discover/c-pages/recommend/store'
+import recommend from '@/pages/discover/c-pages/recommend/store'
+import player from '@/pages/player/store'
 
 export default combineReducers({
-    recommend: reducer
+    recommend,
+    player,
 })
