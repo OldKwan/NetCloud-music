@@ -1,9 +1,9 @@
-import React, { memo, useEffect } from 'react'
+import React, { memo, useCallback, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector, shallowEqual } from "react-redux";
 import { Slider } from 'antd'
 
 import { updateSongAction } from '../store/actionCreator'
-import { getSizeImage, formatDate } from '@/utils/format-utils'
+import { getSizeImage, formatDate, getPlaySong, throttle } from '@/utils/format-utils'
 
 import {
     PlaybarWrapper,
@@ -14,6 +14,12 @@ import {
 
 export default memo(function HTAppPlayerBar() {
     const dispatch = useDispatch()
+    const audioRef = useRef()
+
+    const [currentTime, setCurrentTime] = useState(0)
+    const [sliderPercent, setSliderPercent] = useState(0)
+    const [isChanging, setIsChanging] = useState(false)
+    const [isPlaying, setIsPlaying] = useState(false)
 
     const { currentSong = {} } = useSelector(state => ({
         currentSong: state.getIn(['player', 'currentSong']),
@@ -23,15 +29,42 @@ export default memo(function HTAppPlayerBar() {
         dispatch(updateSongAction(167876))
     }, [dispatch])
 
+    useEffect(() => {
+        audioRef.current.src = getPlaySong(currentSong && currentSong.id)
+    }, [currentSong])
+
     const picUrl = (currentSong && currentSong.al && currentSong.al.picUrl) || ''
     const singer = (currentSong && currentSong.ar && currentSong.ar[0] && currentSong.ar[0].name) || ''
+    const duration = currentSong && currentSong.dt
 
+    const handleTimeUpdate = e => {
+        if (!isChanging) {
+            setCurrentTime(Math.floor(e.target.currentTime * 1000))
+            setSliderPercent(currentTime/duration*100)
+        }
+    }
+
+    const handleControlSong = (isPlaying) => {
+        isPlaying ? audioRef.current.pause() : audioRef.current.play()
+        setIsPlaying(!isPlaying)
+    }
+
+    const handleSilderChange = useCallback((value) => {
+        setCurrentTime(value/100*duration)
+        setSliderPercent(value)
+        setIsChanging(true)
+    }, [duration])
+    const handleSilderAfterChange = useCallback((value) => {
+        audioRef.current.currentTime = value/100*duration/1000 // 赋值秒
+        setIsChanging(false)
+    }, [audioRef, duration])
+    
     return (
         <PlaybarWrapper className="sprite_player">
             <div className="content wrap-v2">
-                <Control>
+                <Control isPlaying={isPlaying}>
                     <button className="sprite_player prev"></button>
-                    <button className="sprite_player play"></button>
+                    <button className="sprite_player play" onClick={() => handleControlSong(isPlaying)}></button>
                     <button className="sprite_player next"></button>
                 </Control>
                 <PlayInfo>
@@ -46,11 +79,11 @@ export default memo(function HTAppPlayerBar() {
                             <a href="#" className="singer-name">{singer}</a>
                         </div>
                         <div className="progress">
-                            <Slider defaultValue={30} />
+                            <Slider value={sliderPercent} onChange={handleSilderChange} onAfterChange={handleSilderAfterChange} />
                             <div className="time">
-                                <span className="now-time">02 : 30</span>
+                                <span className="now-time">{formatDate(currentTime, 'mm:ss')}</span>
                                 <span className="divider">/</span>
-                                <span className="duration">{formatDate((currentSong && currentSong.dt) || 0, 'mm:ss')}</span>
+                                <span className="duration">{formatDate(duration || 0, 'mm:ss')}</span>
                             </div>
                         </div>
                     </div>
@@ -67,7 +100,7 @@ export default memo(function HTAppPlayerBar() {
                     </div>
                 </Operator>
             </div>
-            
+            <audio ref={audioRef} onTimeUpdate={handleTimeUpdate} />
             
         </PlaybarWrapper>
     )

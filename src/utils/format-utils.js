@@ -46,3 +46,18 @@ export function formatDate(time, fmt) {
   export function formatMinuteSecond(time) {
     return formatDate(time, "mm:ss");
   }
+
+  export function getPlaySong(id) {
+    return `https://music.163.com/song/media/outer/url?id=${id}.mp3`;
+  }
+
+  export function throttle(action, delay){
+    var pre = new Date()
+    return function(){
+      var curr = +new Date()
+      if (curr - pre > delay){
+        action.apply(this, arguments)
+        pre = curr 
+      }
+    }
+  }
