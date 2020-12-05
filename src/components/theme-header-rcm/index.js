@@ -13,7 +13,7 @@ const HYThemeHeaderRCM = memo(function(props) {
                     {
                         keywords.map((item, index) => (
                             <div className="item" key={index}>
-                                <a href="#" >{item}</a>
+                                <a href="/#" >{item}</a>
                                 <span className="divider">|</span>
                             </div>
                         ))
@@ -21,7 +21,7 @@ const HYThemeHeaderRCM = memo(function(props) {
                 </div>
             </div>
             <div className="right">
-                <a className="todo" onClick={onMore || null}>更多</a>
+                <a href="/#" className="todo" onClick={onMore || null}>更多</a>
                 <i className="icon sprite_02" />
             </div>
         </HeaderWrapper>

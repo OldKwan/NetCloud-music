@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useEffect } from 'react'
+import React, { memo, useEffect } from 'react'
 import { useDispatch, useSelector, shallowEqual } from 'react-redux'
 import HYThemeHeaderRCM from '@/components/theme-header-rcm'
 import { updateHotRecommendAction } from '@/pages/discover/c-pages/recommend/store/actionCreators'

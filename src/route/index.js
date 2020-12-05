@@ -27,7 +27,7 @@ import HYMine from "@/pages/mine";
 import HYFriend from "@/pages/friend";
 
 
-export default [
+const route = [
     {
         path: '/',
         exact: true,
@@ -84,3 +84,5 @@ export default [
         component: HYMine,
     }
 ]
+
+export default route

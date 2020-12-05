@@ -8,7 +8,7 @@ const defaultState = Map({
     currentSong: {}
 })
 
-export default function(state = defaultState, action) {
+function reducer(state = defaultState, action) {
     switch (action.type) {
         case CHANGE_CURRENT_SONG:
             return state.set('currentSong', action.currentSong)
@@ -17,3 +17,5 @@ export default function(state = defaultState, action) {
             return state
     }
 }
+
+export default reducer

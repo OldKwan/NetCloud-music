@@ -6,10 +6,33 @@ export const PlaybarWrapper = styled.div`
   position: fixed;
   left: 0;
   right: 0;
-  bottom: 0;
+  bottom: ${props => props.visual ? '0px' : '-46px'};
   height: 52px;
   background-position: 0 0;
   background-repeat: repeat;
+  transition: all ${props => props.visual ? '200ms' : '600ms'} ease;
+  &:before {
+    content: "";
+    position: absolute;
+    display: block;
+    top: -10px;
+    right: 0;
+    left: 0;
+    width: 100%;
+    height: 12px;
+  }
+  .lock-btn {
+    position: absolute;
+    display: block;
+    top: -10px;
+    right: 20px;
+    width: 50px;
+    height: 16px;
+    color: #fff;
+    background: #2e2e2e;
+    text-align: center;
+    z-index: 9;
+  }
 
   .content {
     display: flex;

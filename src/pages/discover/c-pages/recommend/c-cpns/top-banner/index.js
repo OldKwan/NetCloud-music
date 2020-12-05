@@ -1,5 +1,5 @@
 import React, { memo, useEffect, useRef, useCallback, useState } from 'react';
-import { connect, useDispatch, useSelector, shallowEqual } from 'react-redux'
+import { useDispatch, useSelector, shallowEqual } from 'react-redux'
 import { Carousel } from 'antd'
 
 import {
@@ -39,7 +39,7 @@ export default memo(function HYTopBanner() {
         <BannerLeft>
           <Carousel effect="fade" autoplay ref={bannerRef} beforeChange={bannerChange}>
             {
-              banner && banner.length != 0 && banner.map((item, index) => (
+              banner && banner.length !== 0 && banner.map((item, index) => (
                 <div className="banner-item" key={item.imageUrl}>
                   <img className="image" src={item.imageUrl} alt={item.typeTitle} />
                 </div>

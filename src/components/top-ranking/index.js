@@ -14,10 +14,10 @@ export default memo(function HYTopRanking(props) {
             <div className="header">
                 <div className="image">
                     <img src={getSizeImage(info.coverImgUrl)} alt="" />
-                    <a href="#" className="image_cover">ranking</a>
+                    <a href="/#" className="image_cover">ranking</a>
                 </div>
                 <div className="info">
-                    <a href="#">{info.name}</a>
+                    <a href="/#">{info.name}</a>
                     <div>
                         <button className="btn sprite_02 play"></button>
                         <button className="btn sprite_02 favor"></button>
@@ -42,7 +42,7 @@ export default memo(function HYTopRanking(props) {
                 }
             </div>
             <div className="footer">
-                <a href="#">查看全部 &gt;</a>
+                <a href="/#">查看全部 &gt;</a>
             </div>
         </TopRankingWrapper>
     )

@@ -3,7 +3,7 @@ import { useDispatch, useSelector, shallowEqual } from "react-redux";
 import { Slider } from 'antd'
 
 import { updateSongAction } from '../store/actionCreator'
-import { getSizeImage, formatDate, getPlaySong, throttle } from '@/utils/format-utils'
+import { getSizeImage, formatDate, getPlaySong } from '@/utils/format-utils'
 
 import {
     PlaybarWrapper,
@@ -12,22 +12,58 @@ import {
     Operator
 } from './style'
 
+let timeID = null
 export default memo(function HTAppPlayerBar() {
     const dispatch = useDispatch()
     const audioRef = useRef()
+    const PlayerHoverRef = useRef()
 
     const [currentTime, setCurrentTime] = useState(0)
     const [sliderPercent, setSliderPercent] = useState(0)
     const [isChanging, setIsChanging] = useState(false)
     const [isPlaying, setIsPlaying] = useState(false)
+    const [playerVisual, setPlayerVisual] = useState(false)
+    const [isLock, setIsLock] = useState(false)
 
     const { currentSong = {} } = useSelector(state => ({
         currentSong: state.getIn(['player', 'currentSong']),
     }), shallowEqual)
+
     
     useEffect(() => {
         dispatch(updateSongAction(167876))
     }, [dispatch])
+
+    useEffect(() => { // 注册和卸载 player hover处理函数
+        let currentEle = null
+        const handleHover = (e) => {
+            console.log('enter: ', e);
+            if (isLock) return
+            setPlayerVisual(true)
+            timeID && clearTimeout(timeID)
+        }
+    
+        const handleHoverOut = (e) => {
+            console.log('mouseleave: ', e);
+            if (isLock) return
+            timeID = setTimeout(() => {
+                setPlayerVisual(false)
+            }, 1200);
+        }
+        if (PlayerHoverRef) {
+            currentEle = PlayerHoverRef.current
+            currentEle.addEventListener('mouseenter', handleHover)
+            currentEle.addEventListener('mouseleave', handleHoverOut)
+            
+        }
+        return () => { // 组件卸载时执行
+            if (currentEle) {
+                currentEle.removeEventListener('mouseenter', handleHover)
+                currentEle.removeEventListener('mouseleave', handleHoverOut)
+                timeID && clearTimeout(timeID)
+            }
+        }
+    }, [isLock, PlayerHoverRef])
 
     useEffect(() => {
         audioRef.current.src = getPlaySong(currentSong && currentSong.id)
@@ -60,7 +96,8 @@ export default memo(function HTAppPlayerBar() {
     }, [audioRef, duration])
     
     return (
-        <PlaybarWrapper className="sprite_player">
+        <PlaybarWrapper className="sprite_player" ref={PlayerHoverRef} visual={playerVisual} lock={isLock}>
+            <div className="lock-btn" onClick={() => setIsLock(!isLock)}>{isLock ? 'lockIn' : 'lockOut'}</div>
             <div className="content wrap-v2">
                 <Control isPlaying={isPlaying}>
                     <button className="sprite_player prev"></button>
@@ -69,14 +106,14 @@ export default memo(function HTAppPlayerBar() {
                 </Control>
                 <PlayInfo>
                     <div className="image">
-                        <a href="#">
+                        <a href="/#">
                             <img src={getSizeImage(picUrl, 35)} alt="" />
                         </a>
                     </div>
                     <div className="info">
                         <div className="song">
                             <span className="song-time">{currentSong.name}</span>
-                            <a href="#" className="singer-name">{singer}</a>
+                            <a href="/#" className="singer-name">{singer}</a>
                         </div>
                         <div className="progress">
                             <Slider value={sliderPercent} onChange={handleSilderChange} onAfterChange={handleSilderAfterChange} />
