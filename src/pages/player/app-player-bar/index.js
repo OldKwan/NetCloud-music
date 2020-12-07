@@ -2,7 +2,11 @@ import React, { memo, useCallback, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector, shallowEqual } from "react-redux";
 import { Slider } from 'antd'
 
-import { updateSongAction } from '../store/actionCreator'
+import {
+    updateSongAction,
+    updateListSequence,
+    updateChangeSongAndIndex,
+} from '../store/actionCreator'
 import { getSizeImage, formatDate, getPlaySong } from '@/utils/format-utils'
 
 import {
@@ -25,14 +29,21 @@ export default memo(function HTAppPlayerBar() {
     const [playerVisual, setPlayerVisual] = useState(false)
     const [isLock, setIsLock] = useState(false)
 
-    const { currentSong = {} } = useSelector(state => ({
+    const { currentSong = {}, sequence = 0 } = useSelector(state => ({
         currentSong: state.getIn(['player', 'currentSong']),
+        sequence: state.getIn(['player', 'sequence']),
     }), shallowEqual)
 
     
     useEffect(() => {
         dispatch(updateSongAction(167876))
     }, [dispatch])
+
+    const handleChangeSequence = () => {
+        let nextStep = sequence + 1
+        if (nextStep > 2) nextStep = 0
+        dispatch(updateListSequence(nextStep))
+    }
 
     useEffect(() => { // 注册和卸载 player hover处理函数
         let currentEle = null
@@ -67,7 +78,12 @@ export default memo(function HTAppPlayerBar() {
 
     useEffect(() => {
         audioRef.current.src = getPlaySong(currentSong && currentSong.id)
-    }, [currentSong])
+        isPlaying && audioRef.current.play().then(res => {
+            setIsPlaying(true)
+        }).catch(err => {
+            setIsPlaying(false)
+        })
+    }, [currentSong, isPlaying])
 
     const picUrl = (currentSong && currentSong.al && currentSong.al.picUrl) || ''
     const singer = (currentSong && currentSong.ar && currentSong.ar[0] && currentSong.ar[0].name) || ''
@@ -85,6 +101,20 @@ export default memo(function HTAppPlayerBar() {
         setIsPlaying(!isPlaying)
     }
 
+    const handleChangeSong = (tag) => {
+        dispatch(updateChangeSongAndIndex(tag))
+        audioRef.current.currentTime = 0
+    }
+
+    const handlePlayerEnd = (tag) => {
+        if (sequence === 2) {
+            audioRef.current.currentTime = 0
+            audioRef.current.play()
+        } else {
+            dispatch(updateChangeSongAndIndex(1))
+        }
+    }
+
     const handleSilderChange = useCallback((value) => {
         setCurrentTime(value/100*duration)
         setSliderPercent(value)
@@ -100,9 +130,9 @@ export default memo(function HTAppPlayerBar() {
             <div className="lock-btn" onClick={() => setIsLock(!isLock)}>{isLock ? 'lockIn' : 'lockOut'}</div>
             <div className="content wrap-v2">
                 <Control isPlaying={isPlaying}>
-                    <button className="sprite_player prev"></button>
+                    <button className="sprite_player prev" onClick={() => handleChangeSong(-1)}></button>
                     <button className="sprite_player play" onClick={() => handleControlSong(isPlaying)}></button>
-                    <button className="sprite_player next"></button>
+                    <button className="sprite_player next" onClick={() => handleChangeSong(1)}></button>
                 </Control>
                 <PlayInfo>
                     <div className="image">
@@ -125,19 +155,19 @@ export default memo(function HTAppPlayerBar() {
                         </div>
                     </div>
                 </PlayInfo>
-                <Operator>
+                <Operator sequence={sequence}>
                     <div className="left">
                         <button className="sprite_player btn favor"></button>
                         <button className="sprite_player btn share"></button>
                     </div>
                     <div className="right sprite_player">
                         <button className="sprite_player btn volume"></button>
-                        <button className="sprite_player btn loop"></button>
+                        <button className="sprite_player btn loop" onClick={handleChangeSequence}></button>
                         <button className="sprite_player btn playlist"></button>
                     </div>
                 </Operator>
             </div>
-            <audio ref={audioRef} onTimeUpdate={handleTimeUpdate} />
+            <audio ref={audioRef} onTimeUpdate={handleTimeUpdate} onEnded={handlePlayerEnd} />
             
         </PlaybarWrapper>
     )

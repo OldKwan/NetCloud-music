@@ -1,14 +1,18 @@
 import React, { memo } from 'react'
+import { useDispatch } from 'react-redux'
 
 import { getSizeImage } from '@/utils/format-utils'
+import { updateSongAction } from '@/pages/player/store'
 
 import { TopRankingWrapper } from './style'
 
 export default memo(function HYTopRanking(props) {
-
+    const dispatch = useDispatch()
     const { info } = props
     const { tracks = [] } = info
-
+    const playMusic = (id) => {
+        dispatch(updateSongAction(id))
+    }
     return (
         <TopRankingWrapper>
             <div className="header">
@@ -32,7 +36,7 @@ export default memo(function HYTopRanking(props) {
                             <div className="info">
                                 <span className="name text-nowrap">{item.name}</span>
                                 <div className="operate">
-                                    <button className="btn sprite_02 play"></button>
+                                    <button className="btn sprite_02 play" onClick={() => playMusic(item.id)}></button>
                                     <button className="btn sprite_icon2 addto"></button>
                                     <button className="btn sprite_02 favor"></button>
                                 </div>
