@@ -9,3 +9,12 @@ export const getSongInfo = (ids) => {
         }
     })
 }
+
+export const getSongLyric = (id) => {
+    return request({
+        url: '/lyric',
+        params: {
+            id,
+        }
+    })
+}
