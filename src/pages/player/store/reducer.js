@@ -6,6 +6,7 @@ import {
     CHANGE_CURRENT_SONGLIST,
     CHANGE_CURRENT_SEQUENCE,
     CHANGE_CURRENT_LYRIC,
+    CHANGE_CURRENT_LYRICINDEX,
 } from './constants'
 
 const defaultState = Map({
@@ -14,6 +15,7 @@ const defaultState = Map({
     songList: [],
     sequence: 0, // 播放顺序: 0顺序 1随机 2单曲循环
     lyric: [], // 当前播放歌曲的歌词
+    lyricIndex: 0, // 当前歌词下标
 })
 
 function reducer(state = defaultState, action) {
@@ -32,6 +34,9 @@ function reducer(state = defaultState, action) {
     
         case CHANGE_CURRENT_LYRIC:
             return state.set('lyric', action.lyric)
+    
+        case CHANGE_CURRENT_LYRICINDEX:
+            return state.set('lyricIndex', action.lyricIndex)
     
         default:
             return state

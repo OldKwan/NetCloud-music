@@ -11,6 +11,7 @@ import {
     CHANGE_CURRENT_SONGLIST,
     CHANGE_CURRENT_SEQUENCE,
     CHANGE_CURRENT_LYRIC,
+    CHANGE_CURRENT_LYRICINDEX,
 } from './constants'
 
 
@@ -37,6 +38,10 @@ export const updateListSequence = sequence => ({
 export const updateSongLyric = lyric => ({
     type: CHANGE_CURRENT_LYRIC,
     lyric,
+})
+export const updateSongLyricIndex = lyricIndex => ({
+    type: CHANGE_CURRENT_LYRICINDEX,
+    lyricIndex,
 })
 
 export const updateChangeSongAndIndex = tag => {

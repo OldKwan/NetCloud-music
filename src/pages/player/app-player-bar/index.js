@@ -1,11 +1,12 @@
 import React, { memo, useCallback, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector, shallowEqual } from "react-redux";
-import { Slider } from 'antd'
+import { Slider, message } from 'antd'
 
 import {
     updateSongAction,
     updateListSequence,
     updateChangeSongAndIndex,
+    updateSongLyricIndex,
 } from '../store/actionCreator'
 import { getSizeImage, formatDate, getPlaySong } from '@/utils/format-utils'
 
@@ -29,9 +30,11 @@ export default memo(function HTAppPlayerBar() {
     const [playerVisual, setPlayerVisual] = useState(false)
     const [isLock, setIsLock] = useState(false)
 
-    const { currentSong = {}, sequence = 0 } = useSelector(state => ({
+    const { currentSong = {}, sequence = 0, lyric = [], lyricIndex = 0 } = useSelector(state => ({
         currentSong: state.getIn(['player', 'currentSong']),
         sequence: state.getIn(['player', 'sequence']),
+        lyric: state.getIn(['player', 'lyric']),
+        lyricIndex: state.getIn(['player', 'lyricIndex']),
     }), shallowEqual)
 
     
@@ -48,14 +51,12 @@ export default memo(function HTAppPlayerBar() {
     useEffect(() => { // 注册和卸载 player hover处理函数
         let currentEle = null
         const handleHover = (e) => {
-            console.log('enter: ', e);
             if (isLock) return
             setPlayerVisual(true)
             timeID && clearTimeout(timeID)
         }
     
         const handleHoverOut = (e) => {
-            console.log('mouseleave: ', e);
             if (isLock) return
             timeID = setTimeout(() => {
                 setPlayerVisual(false)
@@ -91,8 +92,21 @@ export default memo(function HTAppPlayerBar() {
 
     const handleTimeUpdate = e => {
         if (!isChanging) {
-            setCurrentTime(Math.floor(e.target.currentTime * 1000))
-            setSliderPercent(currentTime/duration*100)
+            const timeNow = e.target.currentTime * 1000 // 单位毫秒
+            setCurrentTime(Math.floor(timeNow))
+            setSliderPercent(timeNow/duration*100)
+            if (lyric && lyric.length !== 0) {
+                const indexNow = lyric.findIndex((item) => timeNow < item.time)
+                if (lyricIndex !== (indexNow - 1)) {
+                    lyric[indexNow - 1] && dispatch(updateSongLyricIndex(indexNow - 1))
+                    lyric[indexNow - 1] && message.open({
+                        content: lyric[indexNow - 1] && lyric[indexNow - 1].content,
+                        duration: 0,
+                        key: 'lyric',
+                        className: 'lyric-class',
+                    })
+                }
+            }
         }
     }
 
